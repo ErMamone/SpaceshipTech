@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/spaceships")
@@ -17,8 +19,8 @@ public class SpaceshipController {
 	private final SpaceshipService spaceshipService;
 
 	@GetMapping
-	public ResponseEntity<Page<SpaceshipResponse>> getAllSpaceships(Pageable pageable) {
-		return ResponseEntity.ok(spaceshipService.getAllSpaceships(pageable));
+	public ResponseEntity<Page<SpaceshipResponse>> getAllSpaceships(Pageable page) {
+		return ResponseEntity.ok(spaceshipService.getAllSpaceships(page));
 	}
 
 	@GetMapping("/{id}")
@@ -26,9 +28,9 @@ public class SpaceshipController {
 		return ResponseEntity.ok(spaceshipService.getSpaceshipById(id));
 	}
 
-	@GetMapping("/{search}")
-	public ResponseEntity<SpaceshipResponse> getSpaceshipById(@PathVariable String search) {
-		return ResponseEntity.ok(spaceshipService.getSpaceshipByContainName(search));
+	@GetMapping("/name")
+	public ResponseEntity<List<SpaceshipResponse>> getSpaceshipById(@RequestParam(value = "textToSearch") String textToSearch) {
+		return ResponseEntity.ok(spaceshipService.getSpaceshipByContainName(textToSearch));
 	}
 
 	@PostMapping

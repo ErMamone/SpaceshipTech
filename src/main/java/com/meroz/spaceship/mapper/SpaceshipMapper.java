@@ -5,10 +5,14 @@ import com.meroz.spaceship.controller.response.SpaceshipResponse;
 import com.meroz.spaceship.entities.Spaceship;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
+@Mapper(unmappedTargetPolicy = IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface SpaceshipMapper {
 	SpaceshipMapper SPACESHIP_MAPPER = Mappers.getMapper(SpaceshipMapper.class);
 
@@ -17,5 +21,8 @@ public interface SpaceshipMapper {
 	SpaceshipResponse toResponse(Spaceship spaceship);
 
 	@Mapping(target = "id", ignore = true)
-	Spaceship merge(Spaceship spaceship, SpaceshipRequest request);
+	@Mapping(target = "name", source = "request.name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+	@Mapping(target = "series", source = "request.series", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+	@Mapping(target = "manufacturer", source = "request.manufacturer", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+	Spaceship merge(@MappingTarget Spaceship spaceship, SpaceshipRequest request);
 }

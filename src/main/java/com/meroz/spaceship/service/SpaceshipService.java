@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -30,10 +31,8 @@ public class SpaceshipService {
 		return spaceshipMapper.toResponse(spaceship);
 	}
 
-	public SpaceshipResponse getSpaceshipByContainName(String name) {
-		Spaceship spaceship = spaceshipRepository.findByNameContains(name)
-				.orElseThrow(() -> new NoSuchElementException("Spaceship not found"));
-		return spaceshipMapper.toResponse(spaceship);
+	public List<SpaceshipResponse> getSpaceshipByContainName(String name) {
+		return spaceshipRepository.findSpaceshipsByNameContains(name).stream().map(spaceshipMapper::toResponse).toList();
 	}
 
 	public SpaceshipResponse createSpaceship(SpaceshipRequest request) {
