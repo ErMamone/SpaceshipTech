@@ -3,15 +3,16 @@ package com.meroz.spaceship.service;
 import com.meroz.spaceship.controller.request.SpaceshipRequest;
 import com.meroz.spaceship.controller.response.SpaceshipResponse;
 import com.meroz.spaceship.entities.Spaceship;
+import com.meroz.spaceship.exception.NotFoundBusinessException;
 import com.meroz.spaceship.mapper.SpaceshipMapper;
 import com.meroz.spaceship.repository.SpaceshipRepository;
+import com.meroz.spaceship.utils.enums.ErrorsEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -27,14 +28,16 @@ public class SpaceshipService {
 
 	public SpaceshipResponse getSpaceshipById(Long id) {
 		Spaceship spaceship = spaceshipRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("Spaceship not found"));
+				.orElseThrow(() -> new NotFoundBusinessException(ErrorsEnum.NOT_FOUND, new Object[]{id}));
 		return spaceshipMapper.toResponse(spaceship);
 	}
 
+	//TODO: Implementar cache en este metodo
 	public List<SpaceshipResponse> getSpaceshipByContainName(String name) {
 		return spaceshipRepository.findSpaceshipsByNameContains(name).stream().map(spaceshipMapper::toResponse).toList();
 	}
 
+	//TODO: implementar rabbit para la creacion
 	public SpaceshipResponse createSpaceship(SpaceshipRequest request) {
 		Spaceship spaceship = spaceshipMapper.fromRequest(request);
 		return spaceshipMapper.toResponse(spaceshipRepository.save(spaceship));
@@ -42,7 +45,7 @@ public class SpaceshipService {
 
 	public SpaceshipResponse updateSpaceship(Long id, SpaceshipRequest request) {
 		Spaceship spaceship = spaceshipRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("Spaceship not found"));
+				.orElseThrow(() -> new NotFoundBusinessException(ErrorsEnum.NOT_FOUND, new Object[]{id, request}));
 
 		spaceship = spaceshipMapper.merge(spaceship, request);
 
