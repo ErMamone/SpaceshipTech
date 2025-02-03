@@ -49,4 +49,9 @@ public class SpaceshipController {
 		spaceshipService.deleteSpaceship(id);
 		return ResponseEntity.noContent().build();
 	}
+
+	@GetMapping("/migrationByRabbit")
+	public ResponseEntity<String> migrationByRabbit() {
+		return ResponseEntity.ok(spaceshipService.createAllByRabbit());
+	}
 }

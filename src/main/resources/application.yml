@@ -38,3 +38,11 @@ spring:
     out-of-order: true
     encoding: UTF-8
     execute-in-transaction: true
+  rabbitmq:
+    addresses: ${RABBIT_ADDRESS}
+    username: ${RABBIT_USER}
+    password: ${RABBIT_PASS}
+    listener:
+      simple:
+        concurrency: 2
+        max-concurrency: 100
