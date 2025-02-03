@@ -9,6 +9,11 @@ spring:
   config:
     activate:
       on-profile: ${PROFILE}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          key-uri: ${JWT_KEY_URI:www.google.com}
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}
@@ -46,3 +51,14 @@ spring:
       simple:
         concurrency: 2
         max-concurrency: 100
+
+spaceship:
+  openapi:
+    external: com.meroz.spaceship
+    internal: com.meroz.spaceship.internal
+    title: ^project.name^
+    version: ^project.version^
+    description: ^project.description^
+    terms-of-service: "www.google.com/terminos"
+  security:
+    aud: ${SECURITY_AUD:Spaceship}

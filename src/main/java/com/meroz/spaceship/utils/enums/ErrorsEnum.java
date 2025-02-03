@@ -9,7 +9,8 @@ public enum ErrorsEnum implements SpaceshipEnumError {
 	SERVICE_UNAVAILABLE(1503, "Service Unavailable", HttpStatus.SERVICE_UNAVAILABLE),
 	INTERNAL_SERVER_ERROR(1500, "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
 	BAD_REQUEST(1400, "Bad Request", HttpStatus.BAD_REQUEST),
-	RABBIT_MSG_SEND_FAILED(1510, "Rabbit Msg Send Failed", HttpStatus.INTERNAL_SERVER_ERROR),;
+	RABBIT_MSG_SEND_FAILED(1510, "Rabbit Msg Send Failed", HttpStatus.INTERNAL_SERVER_ERROR),
+	SECURITY_EXCEPTION(1401, "Security Exception", HttpStatus.UNAUTHORIZED),;
 
 	ErrorsEnum(Integer code, String message, HttpStatus httpStatus) {
 		this.code = code;
