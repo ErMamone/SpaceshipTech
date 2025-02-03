@@ -5,13 +5,22 @@ spring:
   datasource:
     url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;
     username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    password: sa
   h2:
     console:
       enabled: true
       path: /h2
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
     open-in-view: false
+
+server:
+  port: 8080
+
+security:
+  jwt:
+    expiration-in-minutes: 10
+    secret-key: na
+
+mock:
+  enabled: false
