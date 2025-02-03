@@ -8,10 +8,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -31,6 +40,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN', 'READ_ALL')")
 	public ResponseEntity<Page<SpaceshipResponse>> getAllSpaceships(Pageable page) {
 		return ResponseEntity.ok(spaceshipService.getAllSpaceships(page));
 	}
@@ -44,6 +54,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<SpaceshipResponse> getSpaceshipById(@PathVariable Long id) {
 		return ResponseEntity.ok(spaceshipService.getSpaceshipById(id));
 	}
@@ -57,6 +68,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<List<SpaceshipResponse>> getSpaceshipByName(@RequestParam(value = "textToSearch") String textToSearch) {
 		return ResponseEntity.ok(spaceshipService.getSpaceshipByContainName(textToSearch));
 	}
@@ -70,6 +82,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'CREATE_ALL')")
 	public ResponseEntity<SpaceshipResponse> createSpaceship(@RequestBody SpaceshipRequest spaceshipDto) {
 		return ResponseEntity.ok(spaceshipService.createSpaceship(spaceshipDto));
 	}
@@ -83,6 +96,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<SpaceshipResponse> updateSpaceship(@PathVariable Long id, @RequestBody SpaceshipRequest spaceshipDto) {
 		return ResponseEntity.ok(spaceshipService.updateSpaceship(id, spaceshipDto));
 	}
@@ -96,6 +110,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	public ResponseEntity<Void> deleteSpaceship(@PathVariable Long id) {
 		spaceshipService.deleteSpaceship(id);
 		return ResponseEntity.noContent().build();
@@ -109,6 +124,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<String> migrationByRabbit() {
 		return ResponseEntity.ok(spaceshipService.createAllByRabbit());
 	}

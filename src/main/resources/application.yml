@@ -9,11 +9,6 @@ spring:
   config:
     activate:
       on-profile: ${PROFILE}
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          key-uri: ${JWT_KEY_URI:www.google.com}
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}
@@ -62,3 +57,8 @@ spaceship:
     terms-of-service: "www.google.com/terminos"
   security:
     aud: ${SECURITY_AUD:Spaceship}
+
+security:
+  jwt:
+    expiration-in-minutes: 10
+    secret-key: cG9ycXVlIGVzdGFzIGJ1c2NhbmRvIGVzdG8/IGVzIHVuYSBwYXNzIHNlZ3VyYQ==
