@@ -29,3 +29,27 @@ spring:
     validateOnMigrate: true
     locations: classpath:db/migration
     out-of-order: true
+  rabbitmq:
+    addresses: localhost:5672
+    password: guest
+    username: guest
+    listener:
+      simple:
+        concurrency: 2
+        max-concurrency: 100
+
+spaceship:
+  openapi:
+    external: com.meroz.spaceship
+    internal: com.meroz.spaceship.internal
+    title: ^project.name^
+    version: ^project.version^
+    description: ^project.description^
+    terms-of-service: "www.google.com/terminos"
+  security:
+    aud: "Spaceship"
+
+security:
+  jwt:
+    expiration-in-minutes: 10
+    secret-key: cG9ycXVlIGVzdGFzIGJ1c2NhbmRvIGVzdG8/IGVzIHVuYSBwYXNzIHNlZ3VyYQ==

@@ -1,20 +1,42 @@
 package com.meroz.spaceship.config;
 
+import com.meroz.spaceship.config.security.filter.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-//@EnableWebSecurity
-//@EnableMethodSecurity
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-	private String publicKeyUri;
+	private final AuthenticationProvider daoAuthProvider;
 
-	private String resourceId;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	private String codePrefix;
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		return http.csrf(AbstractHttpConfigurer::disable)
+				.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(daoAuthProvider)
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.authorizeHttpRequests(
+						authorizeRequests -> authorizeRequests.requestMatchers("/swagger-ui/**",
+										"/metrics",
+										"/metrics/**",
+										//"/**",
+										"/users/authenticate",
+										"/users/register",
+										"/v3/api-docs/**").permitAll()
+								.anyRequest().authenticated())
+				.build();
+	}
 
-	private static final String CLAIM_KEY_AUTHORITIES = "authorities";
-	private static final String AUTHORITIES_PREFIX = "";
-
-	//TODO:Implementar Security y spring security
 }

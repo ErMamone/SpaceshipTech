@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > SpaceshipService</title>
+  <title>Coverage Report > LoginController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.meroz.spaceship.service</a>
+    <a href="../index.html">com.meroz.spaceship.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: SpaceshipService (com.meroz.spaceship.service)</h1>
+<h1>Coverage Summary for Class: LoginController (com.meroz.spaceship.controller)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,29 +41,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">SpaceshipService</td>
+  <td class="name">LoginController</td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (1/1)
+    (0/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (7/7)
+    (0/5)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (13/13)
+    (0/10)
   </span>
 </td>
 </tr>
@@ -75,62 +75,62 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.meroz.spaceship.service;
+<code class="sourceCode" id="sourceCode">&nbsp;package com.meroz.spaceship.controller;
 &nbsp;
-&nbsp;import com.meroz.spaceship.controller.request.SpaceshipRequest;
-&nbsp;import com.meroz.spaceship.controller.response.SpaceshipResponse;
-&nbsp;import com.meroz.spaceship.entities.Spaceship;
-&nbsp;import com.meroz.spaceship.mapper.SpaceshipMapper;
-&nbsp;import com.meroz.spaceship.repository.SpaceshipRepository;
+&nbsp;import com.meroz.spaceship.config.security.request.AuthenticationRequest;
+&nbsp;import com.meroz.spaceship.config.security.request.UserToCreate;
+&nbsp;import com.meroz.spaceship.config.security.response.AuthenticationResponse;
+&nbsp;import com.meroz.spaceship.config.security.response.RegisteredUser;
+&nbsp;import com.meroz.spaceship.config.security.service.AuthenticationService;
+&nbsp;import com.meroz.spaceship.entities.User;
+&nbsp;import jakarta.validation.Valid;
 &nbsp;import lombok.AllArgsConstructor;
-&nbsp;import org.springframework.data.domain.Page;
-&nbsp;import org.springframework.data.domain.Pageable;
-&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
 &nbsp;
 &nbsp;import java.util.List;
-&nbsp;import java.util.NoSuchElementException;
 &nbsp;
-&nbsp;@Service
+&nbsp;@RestController
 &nbsp;@AllArgsConstructor
-&nbsp;public class SpaceshipService {
+&nbsp;@RequestMapping(&quot;/users&quot;)
+&nbsp;public class LoginController {
 &nbsp;
-&nbsp;	private final SpaceshipRepository spaceshipRepository;
+&nbsp;	private final AuthenticationService authenticationService;
 &nbsp;
-<b class="fc">&nbsp;	private static final SpaceshipMapper spaceshipMapper = SpaceshipMapper.SPACESHIP_MAPPER;</b>
-&nbsp;
-&nbsp;	public Page&lt;SpaceshipResponse&gt; getAllSpaceships(Pageable page) {
-<b class="fc">&nbsp;		return spaceshipRepository.findAll(page).map(spaceshipMapper::toResponse);</b>
+&nbsp;	@PostMapping(&quot;/register&quot;)
+&nbsp;	public ResponseEntity&lt;RegisteredUser&gt; register(@RequestBody @Valid UserToCreate newUser) {
+<b class="nc">&nbsp;		RegisteredUser register = authenticationService.registerOneCustomer(newUser);</b>
+<b class="nc">&nbsp;		return ResponseEntity.ok(register);</b>
 &nbsp;	}
 &nbsp;
-&nbsp;	public SpaceshipResponse getSpaceshipById(Long id) {
-<b class="fc">&nbsp;		Spaceship spaceship = spaceshipRepository.findById(id)</b>
-<b class="fc">&nbsp;				.orElseThrow(() -&gt; new NoSuchElementException(&quot;Spaceship not found&quot;));</b>
-<b class="fc">&nbsp;		return spaceshipMapper.toResponse(spaceship);</b>
+&nbsp;	@PostMapping(&quot;/authenticate&quot;)
+&nbsp;	public ResponseEntity&lt;AuthenticationResponse&gt; authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
+<b class="nc">&nbsp;		AuthenticationResponse rsp = authenticationService.login(authenticationRequest);</b>
+<b class="nc">&nbsp;		return ResponseEntity.ok(rsp);</b>
 &nbsp;	}
 &nbsp;
-&nbsp;	public List&lt;SpaceshipResponse&gt; getSpaceshipByContainName(String name) {
-<b class="fc">&nbsp;		return spaceshipRepository.findSpaceshipsByNameContains(name).stream().map(spaceshipMapper::toResponse).toList();</b>
+&nbsp;	@GetMapping(&quot;/validate-token&quot;)
+&nbsp;	public ResponseEntity&lt;Boolean&gt; validate(@RequestParam String jwt) {
+<b class="nc">&nbsp;		boolean isTokenValid = authenticationService.validateToken(jwt);</b>
+<b class="nc">&nbsp;		return ResponseEntity.ok(isTokenValid);</b>
 &nbsp;	}
 &nbsp;
-&nbsp;	public SpaceshipResponse createSpaceship(SpaceshipRequest request) {
-<b class="fc">&nbsp;		Spaceship spaceship = spaceshipMapper.fromRequest(request);</b>
-<b class="fc">&nbsp;		return spaceshipMapper.toResponse(spaceshipRepository.save(spaceship));</b>
+&nbsp;	@GetMapping(&quot;/profile&quot;)
+&nbsp;	public ResponseEntity&lt;User&gt; findMyProfile() {
+<b class="nc">&nbsp;		User user = authenticationService.findLoggedInUser();</b>
+<b class="nc">&nbsp;		return ResponseEntity.ok(user);</b>
 &nbsp;	}
 &nbsp;
-&nbsp;	public SpaceshipResponse updateSpaceship(Long id, SpaceshipRequest request) {
-<b class="fc">&nbsp;		Spaceship spaceship = spaceshipRepository.findById(id)</b>
-<b class="fc">&nbsp;				.orElseThrow(() -&gt; new NoSuchElementException(&quot;Spaceship not found&quot;));</b>
-&nbsp;
-<b class="fc">&nbsp;		spaceship = spaceshipMapper.merge(spaceship, request);</b>
-&nbsp;
-<b class="fc">&nbsp;		return spaceshipMapper.toResponse(spaceshipRepository.save(spaceship));</b>
+&nbsp;	@GetMapping(&quot;/getAll&quot;)
+&nbsp;	public ResponseEntity&lt;List&lt;User&gt;&gt; findAllUsers() {
+<b class="nc">&nbsp;		List&lt;User&gt; user = authenticationService.findAll();</b>
+<b class="nc">&nbsp;		return ResponseEntity.ok(user);</b>
 &nbsp;	}
-&nbsp;
-&nbsp;	public void deleteSpaceship(Long id) {
-<b class="fc">&nbsp;		spaceshipRepository.deleteById(id);</b>
-&nbsp;	}
-&nbsp;
-&nbsp;
 &nbsp;}
 </code>
 </pre>
@@ -155,7 +155,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-01-31 16:55</div>
+    <div style="float:right;">generated on 2025-02-03 19:47</div>
 </div>
 </body>
 </html>
