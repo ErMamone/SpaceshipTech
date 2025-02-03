@@ -8,11 +8,14 @@ import com.meroz.spaceship.mapper.SpaceshipMapper;
 import com.meroz.spaceship.repository.SpaceshipRepository;
 import com.meroz.spaceship.utils.enums.ErrorsEnum;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.meroz.spaceship.config.CacheConfig.SPACESHIP_NAMES;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +35,7 @@ public class SpaceshipService {
 		return spaceshipMapper.toResponse(spaceship);
 	}
 
-	//TODO: Implementar cache en este metodo
+	@Cacheable(cacheNames = SPACESHIP_NAMES)
 	public List<SpaceshipResponse> getSpaceshipByContainName(String name) {
 		return spaceshipRepository.findSpaceshipsByNameContains(name).stream().map(spaceshipMapper::toResponse).toList();
 	}
