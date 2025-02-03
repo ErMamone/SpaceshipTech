@@ -1,4 +1,4 @@
-package com.meroz.spaceship.controller;
+package com.meroz.spaceship.config.rest;
 
 import com.meroz.spaceship.config.security.request.AuthenticationRequest;
 import com.meroz.spaceship.config.security.request.UserToCreate;
