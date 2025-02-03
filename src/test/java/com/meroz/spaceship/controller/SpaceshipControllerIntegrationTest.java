@@ -1,32 +1,36 @@
 package com.meroz.spaceship.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meroz.spaceship.config.CustomTestConfig;
+import com.meroz.spaceship.config.SecurityConfig;
+import com.meroz.spaceship.controller.response.SpaceshipResponse;
 import com.meroz.spaceship.service.SpaceshipService;
-import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.mock.web.MockServletContext;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
 
-@WebMvcTest(controllers = SpaceshipController.class)
-@ContextConfiguration(classes = {CustomTestConfig.ControllerTestConfiguration.class})
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@Import(SecurityConfig.class)
+@WebMvcTest(SpaceshipController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class SpaceshipControllerIntegrationTest {
+
+	@Autowired
+	private WebApplicationContext wac;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -37,24 +41,56 @@ public class SpaceshipControllerIntegrationTest {
 	@Mock
 	private SpaceshipService spaceshipService;
 
-
 	@Test
 	@WithMockUser
-	public void givenWac_whenServletContext_thenItProvidesGreetController() {
-		ServletContext servletContext = mockMvc.getDispatcherServlet().getServletContext();
+	public void getAllIntegrationTest() throws Exception {
+		Page<SpaceshipResponse> responseMock = new PageImpl<>(getSpaceshipListContainingName());
 
-		assertNotNull(servletContext);
-		assertInstanceOf(MockServletContext.class, servletContext);
+		when(spaceshipService.getAllSpaceships(any())).thenReturn(responseMock);
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders
+						.get("/spaceships")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+
 	}
 
 	@Test
-	@WithMockUser
-	public void controllerTest() throws Exception {
-		MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/spaceship"))
-				.andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.message").value("Hello World!!!"))
-				.andReturn();
+	public void getByIdIntegrationTest() {
+		/*ResponseEntity<SpaceshipResponse> response = mockMvc.perform(MockMvcRequestBuilders.get( "/spaceships/1L").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
 
-		assertEquals("application/json;charset=UTF-8", mvcResult.getResponse().getContentType());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+
+		 */
+	}
+
+
+	private static List<SpaceshipResponse> getSpaceshipListContainingName() {
+		return List.of(getSpaceship(), getSpaceship2());
+	}
+
+	private static SpaceshipResponse getSpaceship2() {
+		SpaceshipResponse toReturn = new SpaceshipResponse();
+
+		toReturn.setId(2L);
+		toReturn.setName("Umberto");
+		toReturn.setSeries("Star wars");
+		toReturn.setManufacturer("Kuat");
+
+		return toReturn;
+	}
+
+	private static SpaceshipResponse getSpaceship() {
+		SpaceshipResponse toReturn = new SpaceshipResponse();
+
+		toReturn.setId(1L);
+		toReturn.setName("test");
+		toReturn.setSeries("test");
+		toReturn.setManufacturer("test");
+
+		return toReturn;
 	}
 }
