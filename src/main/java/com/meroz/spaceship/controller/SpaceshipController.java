@@ -40,7 +40,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN', 'READ_ALL')")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<Page<SpaceshipResponse>> getAllSpaceships(Pageable page) {
 		return ResponseEntity.ok(spaceshipService.getAllSpaceships(page));
 	}
@@ -82,7 +82,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'CREATE_ALL')")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<SpaceshipResponse> createSpaceship(@RequestBody SpaceshipRequest spaceshipDto) {
 		return ResponseEntity.ok(spaceshipService.createSpaceship(spaceshipDto));
 	}
@@ -110,7 +110,7 @@ public class SpaceshipController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
 	})
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
 	public ResponseEntity<Void> deleteSpaceship(@PathVariable Long id) {
 		spaceshipService.deleteSpaceship(id);
 		return ResponseEntity.noContent().build();

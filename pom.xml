@@ -25,7 +25,7 @@
         <swagger-jakarta.version>2.2.19</swagger-jakarta.version>
         <springdoc.version>1.8.0</springdoc.version>
         <jjwt.version>0.12.3</jjwt.version>
-        <junit.version>5.7.2</junit.version>
+        <testcontainer.version>1.20.1</testcontainer.version>
     </properties>
 
     <dependencyManagement>
@@ -90,6 +90,24 @@
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>rabbitmq</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
