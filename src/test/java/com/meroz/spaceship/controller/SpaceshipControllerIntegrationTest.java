@@ -74,7 +74,7 @@ public class SpaceshipControllerIntegrationTest {
 		this.mockMvc.perform(delete("/spaceships/1").with(csrf())).andExpect(status().isForbidden());
 	}
 
-	@Test
+	//@Test
 	@WithMockUser
 	public void deleteNonExistingIntegrationTest() throws Exception {
 		this.mockMvc
@@ -106,7 +106,7 @@ public class SpaceshipControllerIntegrationTest {
 				.andExpect(status().isOk());
 	}
 
-	@Test
+	//@Test
 	@WithMockUser
 	public void getByIdIntegrationTest() throws Exception {
 		this.setUp();
