@@ -3,16 +3,21 @@ spring:
     activate:
       on-profile: integration-test
   datasource:
-    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;
+    url: jdbc:h2:mem:~/SHIPS;INIT=create schema if not exists SHIPS;DB_CLOSE_DELAY=-1;
     username: sa
-    password: sa
+    password:
   h2:
     console:
       enabled: true
       path: /h2
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
     open-in-view: false
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: true
 
 server:
   port: 8080
@@ -21,6 +26,17 @@ security:
   jwt:
     expiration-in-minutes: 10
     secret-key: na
+
+spaceship:
+  openapi:
+    external: com.meroz.spaceship
+    internal: com.meroz.spaceship.internal
+    title: ^project.name^
+    version: ^project.version^
+    description: ^project.description^
+    terms-of-service: "www.google.com/terminos"
+  security:
+    aud: "Spaceship"
 
 mock:
   enabled: false
